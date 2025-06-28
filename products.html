@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+
+{% block title %}
+{% if current_category %}
+{{ current_category.name_ar }} - موزايك ديكور
+{% else %}
+جميع المنتجات - موزايك ديكور
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header bg-light py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="display-6 fw-bold text-primary mb-2">
+                    {% if current_category %}
+                        {{ current_category.name_ar }}
+                    {% else %}
+                        جميع المنتجات
+                    {% endif %}
+                </h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ url_for('index') }}">الرئيسية</a></li>
+                        {% if current_category %}
+                        <li class="breadcrumb-item"><a href="{{ url_for('products') }}">المنتجات</a></li>
+                        <li class="breadcrumb-item active">{{ current_category.name_ar }}</li>
+                        {% else %}
+                        <li class="breadcrumb-item active">المنتجات</li>
+                        {% endif %}
+                    </ol>
+                </nav>
+            </div>
+            <div class="col-md-4">
+                <form method="GET" class="d-flex">
+                    <input type="text" name="search" class="form-control me-2" 
+                           placeholder="البحث في المنتجات..." value="{{ search }}">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-lg-3 mb-4">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h6 class="mb-0 fw-bold">
+                            <i class="fas fa-filter me-2"></i>فئات المنتجات
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <a href="{{ url_for('products') }}" 
+                                   class="text-decoration-none d-flex justify-content-between align-items-center py-2 px-3 rounded {{ 'bg-primary text-white' if not current_category else 'text-dark' }}">
+                                    جميع المنتجات
+                                    <i class="fas fa-arrow-left"></i>
+                                </a>
+                            </li>
+                            {% for category in categories %}
+                            <li class="mb-2">
+                                <a href="{{ url_for('products', category_slug=category.slug) }}" 
+                                   class="text-decoration-none d-flex justify-content-between align-items-center py-2 px-3 rounded {{ 'bg-primary text-white' if current_category and current_category.id == category.id else 'text-dark' }}">
+                                    {{ category.name_ar }}
+                                    <i class="fas fa-arrow-left"></i>
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="col-lg-9">
+                {% if search %}
+                <div class="alert alert-info">
+                    <i class="fas fa-search me-2"></i>
+                    نتائج البحث عن: <strong>{{ search }}</strong> ({{ products.total }} نتيجة)
+                </div>
+                {% endif %}
+
+                {% if products.items %}
+                <div class="row g-4">
+                    {% for product in products.items %}
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card product-card h-100 border-0 shadow-sm">
+                            <div class="position-relative">
+                                <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.name_ar }}">
+                                {% if product.is_new_arrival %}
+                                <span class="badge bg-success position-absolute top-0 end-0 m-2">جديد</span>
+                                {% endif %}
+                                {% if product.is_featured %}
+                                <span class="badge bg-warning text-dark position-absolute top-0 start-0 m-2">مميز</span>
+                                {% endif %}
+                                {% if product.stock_quantity == 0 %}
+                                <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-50">
+                                    <span class="badge bg-danger fs-6">نفذت الكمية</span>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="card-body d-flex flex-column">
+                                <h6 class="card-title fw-bold">{{ product.name_ar }}</h6>
+                                <p class="card-text text-muted small mb-1">كود: {{ product.code }}</p>
+                                {% if product.dimensions %}
+                                <p class="card-text text-muted small mb-2">الأبعاد: {{ product.dimensions }}</p>
+                                {% endif %}
+                                <p class="card-text flex-grow-1">{{ product.description_ar[:100] }}...</p>
+                                
+                                {% if product.features_ar %}
+                                <div class="mb-3">
+                                    {% for feature in product.features_ar.split('،')[:2] %}
+                                    <span class="badge bg-light text-dark me-1 mb-1">{{ feature.strip() }}</span>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                                
+                                <div class="d-flex justify-content-between align-items-center mt-auto">
+                                    <span class="h5 text-primary fw-bold mb-0">{{ product.price }} ش.ج</span>
+                                    <a href="{{ url_for('product_detail', product_id=product.id) }}" 
+                                       class="btn btn-primary btn-sm">
+                                        <i class="fas fa-eye me-1"></i>عرض التفاصيل
+                                    </a>
+                                </div>
+                                
+                                {% if product.stock_quantity > 0 %}
+                                <small class="text-success mt-2">
+                                    <i class="fas fa-check-circle me-1"></i>متوفر ({{ product.stock_quantity }} قطعة)
+                                </small>
+                                {% else %}
+                                <small class="text-danger mt-2">
+                                    <i class="fas fa-times-circle me-1"></i>غير متوفر حالياً
+                                </small>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Pagination -->
+                {% if products.pages > 1 %}
+                <nav aria-label="Product pagination" class="mt-5">
+                    <ul class="pagination justify-content-center">
+                        {% if products.has_prev %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('products', 
+                                category_slug=current_category.slug if current_category else none,
+                                search=search if search else none,
+                                page=products.prev_num) }}">السابق</a>
+                        </li>
+                        {% endif %}
+                        
+                        {% for page_num in products.iter_pages() %}
+                            {% if page_num %}
+                                {% if page_num != products.page %}
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ url_for('products',
+                                        category_slug=current_category.slug if current_category else none,
+                                        search=search if search else none,
+                                        page=page_num) }}">{{ page_num }}</a>
+                                </li>
+                                {% else %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ page_num }}</span>
+                                </li>
+                                {% endif %}
+                            {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">…</span>
+                            </li>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if products.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('products',
+                                category_slug=current_category.slug if current_category else none,
+                                search=search if search else none,
+                                page=products.next_num) }}">التالي</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-box-open fa-5x text-muted mb-4"></i>
+                    <h4 class="text-muted">لا توجد منتجات</h4>
+                    {% if search %}
+                    <p class="text-muted">لم نجد أي منتجات تطابق بحثك</p>
+                    <a href="{{ url_for('products') }}" class="btn btn-primary">عرض جميع المنتجات</a>
+                    {% else %}
+                    <p class="text-muted">لا توجد منتجات في هذه الفئة حالياً</p>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

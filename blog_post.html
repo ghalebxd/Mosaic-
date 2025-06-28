@@ -1,0 +1,269 @@
+{% extends "base.html" %}
+
+{% block title %}{{ post.title_ar }} - مدونة موزايك ديكور{% endblock %}
+
+{% block description %}{{ post.excerpt_ar or post.content_ar[:160] }}{% endblock %}
+
+{% block og_title %}{{ post.title_ar }} - مدونة موزايك ديكور{% endblock %}
+{% block og_description %}{{ post.excerpt_ar or post.content_ar[:160] }}{% endblock %}
+{% block og_image %}{{ post.image_url or url_for('static', filename='images/logo.svg') }}{% endblock %}
+
+{% block content %}
+<article class="py-5">
+    <div class="container">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('index') }}">الرئيسية</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('blog') }}">المدونة</a></li>
+                <li class="breadcrumb-item active">{{ post.title_ar }}</li>
+            </ol>
+        </nav>
+
+        <div class="row">
+            <!-- Main Content -->
+            <div class="col-lg-8">
+                <div class="blog-post">
+                    <!-- Post Header -->
+                    <header class="mb-5">
+                        <h1 class="display-5 fw-bold text-primary mb-3">{{ post.title_ar }}</h1>
+                        
+                        <div class="post-meta d-flex align-items-center mb-4">
+                            <div class="me-4">
+                                <i class="fas fa-calendar text-muted me-2"></i>
+                                <small class="text-muted">{{ post.created_at.strftime('%d %B %Y') }}</small>
+                            </div>
+                            <div class="me-4">
+                                <i class="fas fa-clock text-muted me-2"></i>
+                                <small class="text-muted">وقت القراءة: {{ (post.content_ar|length / 200)|round|int }} دقائق</small>
+                            </div>
+                        </div>
+                        
+                        <!-- Social Share Buttons -->
+                        <div class="post-share d-flex align-items-center gap-2">
+                            <span class="text-muted me-2">شارك المقال:</span>
+                            <button class="btn btn-outline-primary btn-sm" onclick="sharePost()">
+                                <i class="fas fa-share-alt me-1"></i>مشاركة
+                            </button>
+                            <a href="https://wa.me/?text={{ post.title_ar }} - {{ url_for('blog_post', slug=post.slug, _external=True) }}" 
+                               class="btn btn-outline-success btn-sm" target="_blank">
+                                <i class="fab fa-whatsapp me-1"></i>واتساب
+                            </a>
+                            <a href="https://www.facebook.com/sharer/sharer.php?u={{ url_for('blog_post', slug=post.slug, _external=True) }}" 
+                               class="btn btn-outline-primary btn-sm" target="_blank">
+                                <i class="fab fa-facebook me-1"></i>فيسبوك
+                            </a>
+                        </div>
+                    </header>
+
+                    <!-- Featured Image -->
+                    {% if post.image_url %}
+                    <div class="post-image mb-5">
+                        <img src="{{ post.image_url }}" 
+                             class="img-fluid rounded shadow-sm w-100" 
+                             alt="{{ post.title_ar }}"
+                             style="max-height: 400px; object-fit: cover;">
+                    </div>
+                    {% endif %}
+
+                    <!-- Post Content -->
+                    <div class="post-content">
+                        {{ post.content_ar|safe }}
+                    </div>
+
+                    <!-- Tags/Categories -->
+                    <div class="post-tags mt-5 pt-4 border-top">
+                        <h6 class="fw-bold mb-3">مواضيع ذات صلة:</h6>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <span class="badge bg-light text-dark p-2">نصائح ديكور</span>
+                            <span class="badge bg-light text-dark p-2">بديل الخشب</span>
+                            <span class="badge bg-light text-dark p-2">تركيب</span>
+                            <span class="badge bg-light text-dark p-2">ديكور منزلي</span>
+                        </div>
+                    </div>
+
+                    <!-- Author Info -->
+                    <div class="author-info mt-5 p-4 bg-light rounded">
+                        <div class="row align-items-center">
+                            <div class="col-md-3 text-center mb-3 mb-md-0">
+                                <div class="author-avatar bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center" 
+                                     style="width: 80px; height: 80px;">
+                                    <i class="fas fa-user fa-2x"></i>
+                                </div>
+                            </div>
+                            <div class="col-md-9">
+                                <h5 class="fw-bold mb-2">فريق موزايك ديكور</h5>
+                                <p class="text-muted mb-0">
+                                    خبراء في مجال الديكور الداخلي وتطبيق بديل الخشب والرخام. 
+                                    نسعى لتقديم أفضل النصائح والحلول الديكورية لعملائنا الكرام.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Navigation -->
+                    <div class="post-navigation mt-5 pt-4 border-top">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <!-- Previous post would go here -->
+                            </div>
+                            <div class="col-md-6 text-md-end">
+                                <!-- Next post would go here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <div class="blog-sidebar">
+                    <!-- Related Posts -->
+                    {% if related_posts %}
+                    <div class="widget mb-5">
+                        <h4 class="widget-title fw-bold mb-4 pb-2 border-bottom border-primary">مقالات مشابهة</h4>
+                        {% for related_post in related_posts %}
+                        <div class="related-post d-flex mb-3 pb-3 border-bottom">
+                            {% if related_post.image_url %}
+                            <img src="{{ related_post.image_url }}" 
+                                 class="me-3 rounded" 
+                                 alt="{{ related_post.title_ar }}"
+                                 style="width: 60px; height: 60px; object-fit: cover;">
+                            {% else %}
+                            <div class="me-3 bg-light rounded d-flex align-items-center justify-content-center" 
+                                 style="width: 60px; height: 60px; min-width: 60px;">
+                                <i class="fas fa-image text-muted"></i>
+                            </div>
+                            {% endif %}
+                            <div>
+                                <h6 class="mb-1">
+                                    <a href="{{ url_for('blog_post', slug=related_post.slug) }}" 
+                                       class="text-decoration-none text-dark">
+                                        {{ related_post.title_ar }}
+                                    </a>
+                                </h6>
+                                <small class="text-muted">{{ related_post.created_at.strftime('%d %B %Y') }}</small>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <!-- Newsletter Signup -->
+                    <div class="widget mb-5">
+                        <div class="card border-0 bg-primary text-white">
+                            <div class="card-body text-center">
+                                <i class="fas fa-envelope fa-3x mb-3"></i>
+                                <h5 class="fw-bold mb-3">اشترك في نشرتنا</h5>
+                                <p class="mb-4">احصل على أحدث النصائح والأفكار</p>
+                                <form action="{{ url_for('subscribe') }}" method="POST">
+                                    <div class="mb-3">
+                                        <input type="email" name="email" class="form-control" 
+                                               placeholder="بريدك الإلكتروني" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-warning w-100">
+                                        <i class="fas fa-paper-plane me-2"></i>اشتراك
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact Widget -->
+                    <div class="widget mb-5">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body text-center">
+                                <i class="fas fa-headset fa-3x text-primary mb-3"></i>
+                                <h5 class="fw-bold mb-3">تحتاج استشارة؟</h5>
+                                <p class="text-muted mb-4">تواصل معنا للحصول على استشارة مجانية</p>
+                                <a href="https://wa.me/970591234567?text=مرحباً، قرأت مقال {{ post.title_ar }} وأحتاج استشارة" 
+                                   class="btn btn-success w-100" target="_blank">
+                                    <i class="fab fa-whatsapp me-2"></i>تواصل عبر واتساب
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Tips -->
+                    <div class="widget">
+                        <h4 class="widget-title fw-bold mb-4 pb-2 border-bottom border-primary">نصائح سريعة</h4>
+                        <div class="tips-list">
+                            <div class="tip-item d-flex align-items-start mb-3">
+                                <i class="fas fa-lightbulb text-warning me-3 mt-1"></i>
+                                <div>
+                                    <h6 class="fw-bold mb-1">قياس المساحة</h6>
+                                    <small class="text-muted">احرص على قياس المساحة بدقة قبل الشراء</small>
+                                </div>
+                            </div>
+                            <div class="tip-item d-flex align-items-start mb-3">
+                                <i class="fas fa-palette text-primary me-3 mt-1"></i>
+                                <div>
+                                    <h6 class="fw-bold mb-1">اختيار الألوان</h6>
+                                    <small class="text-muted">اختر ألواناً تتناسب مع إضاءة المكان</small>
+                                </div>
+                            </div>
+                            <div class="tip-item d-flex align-items-start">
+                                <i class="fas fa-tools text-success me-3 mt-1"></i>
+                                <div>
+                                    <h6 class="fw-bold mb-1">التركيب المهني</h6>
+                                    <small class="text-muted">استعن بفني مختص للحصول على أفضل النتائج</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</article>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function sharePost() {
+    if (navigator.share) {
+        navigator.share({
+            title: '{{ post.title_ar }}',
+            text: '{{ post.excerpt_ar or post.content_ar[:100] }}',
+            url: window.location.href
+        });
+    } else {
+        // Fallback - copy to clipboard
+        navigator.clipboard.writeText(window.location.href).then(() => {
+            alert('تم نسخ رابط المقال');
+        });
+    }
+}
+
+// Reading progress indicator
+window.addEventListener('scroll', function() {
+    const article = document.querySelector('.post-content');
+    if (!article) return;
+    
+    const articleTop = article.offsetTop;
+    const articleHeight = article.offsetHeight;
+    const windowHeight = window.innerHeight;
+    const scrollTop = window.pageYOffset;
+    
+    const progress = Math.min(100, Math.max(0, 
+        (scrollTop - articleTop + windowHeight / 2) / articleHeight * 100
+    ));
+    
+    // You could add a progress bar here
+});
+
+// Smooth scroll for internal links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    });
+});
+</script>
+{% endblock %}

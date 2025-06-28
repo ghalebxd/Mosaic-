@@ -1,0 +1,242 @@
+{% extends "base.html" %}
+
+{% block title %}مدونة نصائح الديكور - موزايك ديكور{% endblock %}
+
+{% block description %}نصائح وأفكار ديكورية، دليل شامل لاختيار وتركيب بديل الخشب والرخام{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header bg-light py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="display-6 fw-bold text-primary mb-2">مدونة الديكور</h1>
+                <p class="lead text-muted">نصائح وأفكار لتحويل منزلك إلى مساحة أحلامك</p>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ url_for('index') }}">الرئيسية</a></li>
+                        <li class="breadcrumb-item active">المدونة</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        {% if posts.items %}
+        <div class="row g-4">
+            {% for post in posts.items %}
+            <div class="col-lg-4 col-md-6">
+                <article class="card blog-card h-100 border-0 shadow-sm">
+                    {% if post.image_url %}
+                    <div class="blog-image-wrapper position-relative overflow-hidden">
+                        <img src="{{ post.image_url }}" 
+                             class="card-img-top blog-image" 
+                             alt="{{ post.title_ar }}"
+                             style="height: 200px; object-fit: cover;">
+                        <div class="blog-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center opacity-0">
+                            <a href="{{ url_for('blog_post', slug=post.slug) }}" 
+                               class="btn btn-primary rounded-circle">
+                                <i class="fas fa-arrow-left"></i>
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="card-body d-flex flex-column">
+                        <div class="blog-meta mb-2">
+                            <small class="text-muted">
+                                <i class="fas fa-calendar me-1"></i>
+                                {{ post.created_at.strftime('%d %B %Y') }}
+                            </small>
+                        </div>
+                        
+                        <h5 class="card-title fw-bold">
+                            <a href="{{ url_for('blog_post', slug=post.slug) }}" 
+                               class="text-decoration-none text-dark">
+                                {{ post.title_ar }}
+                            </a>
+                        </h5>
+                        
+                        {% if post.excerpt_ar %}
+                        <p class="card-text flex-grow-1">{{ post.excerpt_ar }}</p>
+                        {% else %}
+                        <p class="card-text flex-grow-1">{{ post.content_ar[:150] }}...</p>
+                        {% endif %}
+                        
+                        <div class="d-flex justify-content-between align-items-center mt-auto">
+                            <a href="{{ url_for('blog_post', slug=post.slug) }}" 
+                               class="btn btn-primary">
+                                <i class="fas fa-arrow-left me-2"></i>اقرأ المزيد
+                            </a>
+                            <div class="blog-share">
+                                <button class="btn btn-outline-secondary btn-sm" 
+                                        onclick="sharePost('{{ post.title_ar }}', '{{ url_for('blog_post', slug=post.slug, _external=True) }}')">
+                                    <i class="fas fa-share-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if posts.pages > 1 %}
+        <nav aria-label="Blog pagination" class="mt-5">
+            <ul class="pagination justify-content-center">
+                {% if posts.has_prev %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('blog', page=posts.prev_num) }}">السابق</a>
+                </li>
+                {% endif %}
+                
+                {% for page_num in posts.iter_pages() %}
+                    {% if page_num %}
+                        {% if page_num != posts.page %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('blog', page=page_num) }}">{{ page_num }}</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ page_num }}</span>
+                        </li>
+                        {% endif %}
+                    {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">…</span>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if posts.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('blog', page=posts.next_num) }}">التالي</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+
+        {% else %}
+        <!-- Empty State -->
+        <div class="text-center py-5">
+            <i class="fas fa-blog fa-5x text-muted mb-4"></i>
+            <h4 class="text-muted">لا توجد مقالات</h4>
+            <p class="text-muted">لم يتم نشر أي مقالات بعد</p>
+            <a href="{{ url_for('index') }}" class="btn btn-primary">العودة للرئيسية</a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Newsletter Subscription -->
+<section class="py-5 bg-light">
+    <div class="container text-center">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <h3 class="fw-bold mb-3">اشترك في نشرتنا الإخبارية</h3>
+                <p class="lead text-muted mb-4">احصل على أحدث النصائح والأفكار الديكورية مباشرة في بريدك الإلكتروني</p>
+                <form action="{{ url_for('subscribe') }}" method="POST" class="row g-2 justify-content-center">
+                    <div class="col-md-6">
+                        <input type="email" name="email" class="form-control form-control-lg" 
+                               placeholder="أدخل بريدك الإلكتروني" required>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-primary btn-lg w-100">
+                            <i class="fas fa-paper-plane me-2"></i>اشتراك
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Categories -->
+<section class="py-5">
+    <div class="container">
+        <h3 class="fw-bold text-center mb-5">مواضيع شائعة</h3>
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6">
+                <div class="card category-card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="fas fa-hammer fa-3x text-primary mb-3"></i>
+                        <h5 class="fw-bold">نصائح التركيب</h5>
+                        <p class="text-muted">تعلم كيفية تركيب منتجاتنا بنفسك</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="card category-card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="fas fa-palette fa-3x text-primary mb-3"></i>
+                        <h5 class="fw-bold">اختيار الألوان</h5>
+                        <p class="text-muted">دليل اختيار الألوان المناسبة</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="card category-card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="fas fa-lightbulb fa-3x text-primary mb-3"></i>
+                        <h5 class="fw-bold">أفكار إبداعية</h5>
+                        <p class="text-muted">أفكار مبتكرة لتجديد منزلك</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="card category-card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="fas fa-calculator fa-3x text-primary mb-3"></i>
+                        <h5 class="fw-bold">حساب التكلفة</h5>
+                        <p class="text-muted">كيفية حساب تكلفة مشروعك</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function sharePost(title, url) {
+    if (navigator.share) {
+        navigator.share({
+            title: title,
+            url: url
+        });
+    } else {
+        // Fallback - copy to clipboard
+        navigator.clipboard.writeText(url).then(() => {
+            alert('تم نسخ رابط المقال');
+        });
+    }
+}
+
+// Blog card hover effects
+document.addEventListener('DOMContentLoaded', function() {
+    const blogCards = document.querySelectorAll('.blog-card');
+    
+    blogCards.forEach(card => {
+        const overlay = card.querySelector('.blog-overlay');
+        
+        if (overlay) {
+            card.addEventListener('mouseenter', function() {
+                overlay.classList.remove('opacity-0');
+                overlay.classList.add('opacity-100');
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                overlay.classList.remove('opacity-100');
+                overlay.classList.add('opacity-0');
+            });
+        }
+    });
+});
+</script>
+{% endblock %}

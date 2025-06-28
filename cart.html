@@ -1,0 +1,278 @@
+{% extends "base.html" %}
+
+{% block title %}سلة التسوق - موزايك ديكور{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <!-- Page Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h1 class="display-6 fw-bold text-primary mb-2">سلة التسوق</h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ url_for('index') }}">الرئيسية</a></li>
+                        <li class="breadcrumb-item active">سلة التسوق</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+
+        {% if cart_items %}
+        <div class="row">
+            <!-- Cart Items -->
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-shopping-cart me-2"></i>
+                            منتجاتك ({{ cart_items|length }} منتج)
+                        </h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <form action="{{ url_for('update_cart') }}" method="POST" id="cartForm">
+                            {% for item in cart_items %}
+                            <div class="cart-item border-bottom p-4">
+                                <div class="row align-items-center">
+                                    <div class="col-md-2">
+                                        <img src="{{ item.product.image_url }}" 
+                                             class="img-fluid rounded" 
+                                             alt="{{ item.product.name_ar }}"
+                                             style="height: 80px; object-fit: cover;">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <h6 class="fw-bold mb-1">
+                                            <a href="{{ url_for('product_detail', product_id=item.product.id) }}" 
+                                               class="text-decoration-none text-dark">
+                                                {{ item.product.name_ar }}
+                                            </a>
+                                        </h6>
+                                        <p class="text-muted small mb-1">كود: {{ item.product.code }}</p>
+                                        {% if item.product.dimensions %}
+                                        <p class="text-muted small mb-0">{{ item.product.dimensions }}</p>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-2">
+                                        <span class="fw-bold text-primary">{{ item.product.price }} ش.ج</span>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="quantity-controls d-flex align-items-center">
+                                            <button type="button" class="btn btn-outline-secondary btn-sm" 
+                                                    onclick="decreaseQuantity({{ item.id }})">-</button>
+                                            <input type="number" 
+                                                   name="quantity_{{ item.id }}" 
+                                                   id="quantity_{{ item.id }}"
+                                                   class="form-control form-control-sm text-center mx-1" 
+                                                   value="{{ item.quantity }}" 
+                                                   min="1" 
+                                                   max="{{ item.product.stock_quantity }}"
+                                                   style="width: 60px;"
+                                                   onchange="updateItemTotal({{ item.id }}, {{ item.product.price }})">
+                                            <button type="button" class="btn btn-outline-secondary btn-sm" 
+                                                    onclick="increaseQuantity({{ item.id }}, {{ item.product.stock_quantity }})">+</button>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1 text-center">
+                                        <span class="fw-bold item-total" id="total_{{ item.id }}">
+                                            {{ (item.product.price * item.quantity)|round(2) }} ش.ج
+                                        </span>
+                                    </div>
+                                    <div class="col-md-1 text-center">
+                                        <a href="{{ url_for('remove_from_cart', cart_item_id=item.id) }}" 
+                                           class="btn btn-outline-danger btn-sm"
+                                           onclick="return confirm('هل أنت متأكد من حذف هذا المنتج؟')">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                            
+                            <div class="p-4">
+                                <div class="d-flex justify-content-between">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-sync-alt me-2"></i>تحديث السلة
+                                    </button>
+                                    <a href="{{ url_for('products') }}" class="btn btn-outline-secondary">
+                                        <i class="fas fa-arrow-right me-2"></i>متابعة التسوق
+                                    </a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0 fw-bold">ملخص الطلب</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="summary-item d-flex justify-content-between mb-3">
+                            <span>المجموع الفرعي:</span>
+                            <span id="subtotal" class="fw-bold">{{ total }} ش.ج</span>
+                        </div>
+                        
+                        <div class="summary-item d-flex justify-content-between mb-3">
+                            <span>التوصيل:</span>
+                            <span class="text-success fw-bold">مجاني</span>
+                        </div>
+                        
+                        <hr>
+                        
+                        <div class="summary-item d-flex justify-content-between mb-4">
+                            <span class="h5 fw-bold">المجموع الكلي:</span>
+                            <span id="grandTotal" class="h5 fw-bold text-primary">{{ total }} ش.ج</span>
+                        </div>
+                        
+                        <a href="{{ url_for('checkout') }}" class="btn btn-success btn-lg w-100 mb-3">
+                            <i class="fas fa-credit-card me-2"></i>إتمام الطلب
+                        </a>
+                        
+                        <div class="text-center">
+                            <small class="text-muted">
+                                <i class="fas fa-shield-alt me-1"></i>
+                                دفع آمن ومضمون
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Promo Code -->
+                <div class="card border-0 shadow-sm mt-4">
+                    <div class="card-body">
+                        <h6 class="fw-bold mb-3">كود الخصم</h6>
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="أدخل كود الخصم">
+                            <button class="btn btn-outline-primary" type="button">تطبيق</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trust Badges -->
+                <div class="card border-0 shadow-sm mt-4">
+                    <div class="card-body text-center">
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <i class="fas fa-shipping-fast text-primary fa-2x mb-2"></i>
+                                <small class="d-block">توصيل مجاني</small>
+                            </div>
+                            <div class="col-6">
+                                <i class="fas fa-undo text-primary fa-2x mb-2"></i>
+                                <small class="d-block">إمكانية الإرجاع</small>
+                            </div>
+                            <div class="col-6">
+                                <i class="fas fa-shield-alt text-primary fa-2x mb-2"></i>
+                                <small class="d-block">دفع آمن</small>
+                            </div>
+                            <div class="col-6">
+                                <i class="fas fa-headset text-primary fa-2x mb-2"></i>
+                                <small class="d-block">دعم 24/7</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% else %}
+        <!-- Empty Cart -->
+        <div class="text-center py-5">
+            <i class="fas fa-shopping-cart fa-5x text-muted mb-4"></i>
+            <h3 class="text-muted mb-3">سلة التسوق فارغة</h3>
+            <p class="text-muted mb-4">لم تقم بإضافة أي منتجات إلى سلة التسوق بعد</p>
+            <a href="{{ url_for('products') }}" class="btn btn-primary btn-lg">
+                <i class="fas fa-shopping-bag me-2"></i>ابدأ التسوق الآن
+            </a>
+        </div>
+
+        <!-- Recently Viewed Products -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <h4 class="fw-bold mb-4">قد يعجبك أيضاً</h4>
+                <div class="row g-4">
+                    <!-- This would show recently viewed or recommended products -->
+                    <div class="col-lg-3 col-md-6">
+                        <div class="card product-card border-0 shadow-sm">
+                            <img src="https://pixabay.com/get/g70327e9caba8e9f5020d946f7eefad413c2d18cbffe4946a71fd6f1d8ee76d5be383fd49e788e9adb2f2280d330f3cda473acf96b38f23d9f60a7388f81c7e0e_1280.jpg" 
+                                 class="card-img-top" alt="منتج مقترح">
+                            <div class="card-body">
+                                <h6 class="card-title">بديل الخشب 17 سم</h6>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="h6 text-primary fw-bold">25.00 ش.ج</span>
+                                    <a href="{{ url_for('products') }}" class="btn btn-outline-primary btn-sm">عرض</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function increaseQuantity(itemId, maxStock) {
+    const quantityInput = document.getElementById(`quantity_${itemId}`);
+    const currentValue = parseInt(quantityInput.value);
+    
+    if (currentValue < maxStock) {
+        quantityInput.value = currentValue + 1;
+        updateItemTotal(itemId, getProductPrice(itemId));
+        updateCartTotal();
+    } else {
+        alert(`الحد الأقصى المتاح هو ${maxStock} قطعة`);
+    }
+}
+
+function decreaseQuantity(itemId) {
+    const quantityInput = document.getElementById(`quantity_${itemId}`);
+    const currentValue = parseInt(quantityInput.value);
+    
+    if (currentValue > 1) {
+        quantityInput.value = currentValue - 1;
+        updateItemTotal(itemId, getProductPrice(itemId));
+        updateCartTotal();
+    }
+}
+
+function updateItemTotal(itemId, price) {
+    const quantity = parseInt(document.getElementById(`quantity_${itemId}`).value);
+    const total = (price * quantity).toFixed(2);
+    document.getElementById(`total_${itemId}`).textContent = `${total} ش.ج`;
+    updateCartTotal();
+}
+
+function getProductPrice(itemId) {
+    // Extract price from the total element
+    const totalText = document.getElementById(`total_${itemId}`).textContent;
+    const quantity = parseInt(document.getElementById(`quantity_${itemId}`).value);
+    return parseFloat(totalText.replace(' ش.ج', '')) / quantity;
+}
+
+function updateCartTotal() {
+    let total = 0;
+    document.querySelectorAll('.item-total').forEach(element => {
+        const amount = parseFloat(element.textContent.replace(' ش.ج', ''));
+        total += amount;
+    });
+    
+    document.getElementById('subtotal').textContent = `${total.toFixed(2)} ش.ج`;
+    document.getElementById('grandTotal').textContent = `${total.toFixed(2)} ش.ج`;
+}
+
+// Auto-update cart when quantity changes
+document.querySelectorAll('input[type="number"]').forEach(input => {
+    input.addEventListener('change', function() {
+        setTimeout(() => {
+            document.getElementById('cartForm').submit();
+        }, 1000);
+    });
+});
+</script>
+{% endblock %}

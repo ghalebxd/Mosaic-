@@ -1,0 +1,341 @@
+{% extends "base.html" %}
+
+{% block title %}من نحن - موزايك ديكور{% endblock %}
+
+{% block description %}تعرف على قصة موزايك ديكور، الشركة الرائدة في مجال بديل الخشب والرخام في فلسطين{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section position-relative py-5" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <div class="container">
+        <div class="row align-items-center text-white">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-4">قصتنا</h1>
+                <p class="lead mb-4">
+                    نحن موزايك ديكور، شركة فلسطينية رائدة في مجال الديكور الداخلي وتوفير أجود أنواع بديل الخشب والرخام
+                </p>
+                <div class="d-flex gap-3">
+                    <a href="{{ url_for('contact') }}" class="btn btn-warning btn-lg">
+                        <i class="fas fa-phone me-2"></i>تواصل معنا
+                    </a>
+                    <a href="{{ url_for('products') }}" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-eye me-2"></i>منتجاتنا
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <img src="https://pixabay.com/get/g3fcaeab766a11f6d7635a9bbdb2960bd4d5d0024f677d156d3333069d2431e40e7379ad4835aa8e18858286d348424904ec163738880eac084a849cc7b80262a_1280.jpg" 
+                     class="img-fluid rounded shadow-lg" alt="مكتب موزايك ديكور">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Our Story -->
+<section class="py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4">
+                <img src="https://pixabay.com/get/g0a107e5ca3aad5e717ccbaf6ccf50864ad9e59abdf051cb76405ac90afe155846eecf99ea7b8749db7498c7c327ed586fdd1467759d881fc61864fb162fdc7a9_1280.jpg" 
+                     class="img-fluid rounded shadow-sm" alt="فريق موزايك ديكور">
+            </div>
+            <div class="col-lg-6">
+                <h2 class="display-6 fw-bold text-primary mb-4">من نحن</h2>
+                <p class="lead mb-4">
+                    تأسست موزايك ديكور في قلب فلسطين برؤية واضحة: تقديم أفضل الحلول الديكورية بجودة عالمية وأسعار تنافسية لكل بيت فلسطيني.
+                </p>
+                <p class="mb-4">
+                    نحن متخصصون في توريد وتركيب بديل الخشب وبديل الرخام والشيبورد والبراويز الديكورية، 
+                    ونفتخر بخدمة عملائنا في جميع أنحاء الضفة الغربية بأعلى معايير الجودة والاحترافية.
+                </p>
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <span class="fw-bold">خبرة 10+ سنوات</span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <span class="fw-bold">1000+ عميل سعيد</span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <span class="fw-bold">منتجات عالية الجودة</span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <span class="fw-bold">خدمة ما بعد البيع</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Our Mission & Vision -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-6 fw-bold text-primary">رؤيتنا ورسالتنا</h2>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-5">
+                        <i class="fas fa-eye fa-4x text-primary mb-4"></i>
+                        <h4 class="fw-bold mb-3">رؤيتنا</h4>
+                        <p class="text-muted">
+                            أن نكون الشركة الرائدة في مجال الديكور الداخلي في فلسطين، 
+                            ونساهم في تحويل كل منزل فلسطيني إلى مساحة جميلة ومريحة تعكس شخصية أصحابها.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-5">
+                        <i class="fas fa-bullseye fa-4x text-success mb-4"></i>
+                        <h4 class="fw-bold mb-3">رسالتنا</h4>
+                        <p class="text-muted">
+                            تقديم منتجات ديكورية عالية الجودة بأسعار تنافسية، 
+                            مع توفير خدمة عملاء متميزة وحلول مبتكرة تلبي احتياجات وأذواق عملائنا المختلفة.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Our Values -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-6 fw-bold text-primary">قيمنا</h2>
+            <p class="lead text-muted">المبادئ التي نؤمن بها ونعمل وفقاً لها</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6">
+                <div class="text-center">
+                    <div class="value-icon bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
+                         style="width: 80px; height: 80px;">
+                        <i class="fas fa-award fa-2x"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">الجودة</h5>
+                    <p class="text-muted">نلتزم بتقديم منتجات عالية الجودة تدوم طويلاً</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="text-center">
+                    <div class="value-icon bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
+                         style="width: 80px; height: 80px;">
+                        <i class="fas fa-handshake fa-2x"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">الثقة</h5>
+                    <p class="text-muted">نبني علاقات طويلة المدى مع عملائنا قائمة على الثقة المتبادلة</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="text-center">
+                    <div class="value-icon bg-warning text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
+                         style="width: 80px; height: 80px;">
+                        <i class="fas fa-lightbulb fa-2x"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">الإبداع</h5>
+                    <p class="text-muted">نقدم حلولاً مبتكرة ومميزة لكل مساحة</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="text-center">
+                    <div class="value-icon bg-info text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
+                         style="width: 80px; height: 80px;">
+                        <i class="fas fa-users fa-2x"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">الخدمة</h5>
+                    <p class="text-muted">نضع رضا العميل في المقدمة ونسعى لتجاوز توقعاته</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Our Team -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-6 fw-bold text-primary">فريق العمل</h2>
+            <p class="lead text-muted">تعرف على الأشخاص الذين يقفون وراء نجاح موزايك ديكور</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+                <div class="card team-card border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="team-avatar bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
+                             style="width: 100px; height: 100px;">
+                            <i class="fas fa-user fa-3x"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">أحمد محمد</h5>
+                        <p class="text-primary mb-3">المدير العام</p>
+                        <p class="text-muted small">
+                            خبرة 15 عاماً في مجال الديكور والتصميم الداخلي
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="card team-card border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="team-avatar bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
+                             style="width: 100px; height: 100px;">
+                            <i class="fas fa-user fa-3x"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">سارة أحمد</h5>
+                        <p class="text-success mb-3">مديرة المبيعات</p>
+                        <p class="text-muted small">
+                            متخصصة في خدمة العملاء والاستشارات الديكورية
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="card team-card border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="team-avatar bg-warning text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
+                             style="width: 100px; height: 100px;">
+                            <i class="fas fa-user fa-3x"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">محمد حسن</h5>
+                        <p class="text-warning mb-3">رئيس فريق التركيب</p>
+                        <p class="text-muted small">
+                            خبير في تركيب جميع أنواع بديل الخشب والرخام
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Statistics -->
+<section class="py-5 bg-primary text-white">
+    <div class="container">
+        <div class="row g-4 text-center">
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-item">
+                    <i class="fas fa-calendar fa-3x mb-3"></i>
+                    <h3 class="fw-bold mb-2">10+</h3>
+                    <p class="mb-0">سنوات من الخبرة</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-item">
+                    <i class="fas fa-users fa-3x mb-3"></i>
+                    <h3 class="fw-bold mb-2">1000+</h3>
+                    <p class="mb-0">عميل سعيد</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-item">
+                    <i class="fas fa-project-diagram fa-3x mb-3"></i>
+                    <h3 class="fw-bold mb-2">500+</h3>
+                    <p class="mb-0">مشروع منجز</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-item">
+                    <i class="fas fa-star fa-3x mb-3"></i>
+                    <h3 class="fw-bold mb-2">4.9/5</h3>
+                    <p class="mb-0">تقييم العملاء</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Why Choose Us -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-6 fw-bold text-primary">لماذا تختار موزايك ديكور؟</h2>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <div class="d-flex align-items-start mb-4">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-shipping-fast fa-2x text-primary me-3"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold mb-2">توصيل سريع ومجاني</h5>
+                        <p class="text-muted">
+                            نوفر خدمة توصيل مجانية لجميع أنحاء الضفة الغربية في وقت قياسي
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="d-flex align-items-start mb-4">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-tools fa-2x text-success me-3"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold mb-2">خدمة التركيب المهنية</h5>
+                        <p class="text-muted">
+                            فريق متخصص ومدرب لضمان تركيب مهني وجودة عالية
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="d-flex align-items-start mb-4">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-shield-alt fa-2x text-warning me-3"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold mb-2">ضمان شامل</h5>
+                        <p class="text-muted">
+                            نقدم ضماناً شاملاً على جميع منتجاتنا وخدمات التركيب
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="d-flex align-items-start mb-4">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-headset fa-2x text-info me-3"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold mb-2">دعم على مدار الساعة</h5>
+                        <p class="text-muted">
+                            فريق خدمة العملاء متاح دائماً للإجابة على استفساراتكم
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="py-5 bg-light text-center">
+    <div class="container">
+        <h2 class="display-6 fw-bold text-primary mb-3">جاهزون لبدء مشروعك؟</h2>
+        <p class="lead text-muted mb-5">تواصل معنا اليوم واحصل على استشارة مجانية</p>
+        <div class="d-flex justify-content-center gap-3">
+            <a href="{{ url_for('contact') }}" class="btn btn-primary btn-lg">
+                <i class="fas fa-phone me-2"></i>تواصل معنا
+            </a>
+            <a href="https://wa.me/970591234567?text=مرحباً، أود الحصول على استشارة مجانية" 
+               class="btn btn-success btn-lg" target="_blank">
+                <i class="fab fa-whatsapp me-2"></i>واتساب
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

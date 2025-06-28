@@ -1,0 +1,313 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name_ar }} - موزايك ديكور{% endblock %}
+
+{% block description %}{{ product.description_ar }} - {{ product.features_ar }}{% endblock %}
+
+{% block og_title %}{{ product.name_ar }} - موزايك ديكور{% endblock %}
+{% block og_description %}{{ product.description_ar }}{% endblock %}
+{% block og_image %}{{ product.image_url }}{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('index') }}">الرئيسية</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('products') }}">المنتجات</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('products', category_slug=product.category.slug) }}">{{ product.category.name_ar }}</a></li>
+                <li class="breadcrumb-item active">{{ product.name_ar }}</li>
+            </ol>
+        </nav>
+
+        <div class="row">
+            <!-- Product Images -->
+            <div class="col-lg-6 mb-4">
+                <div class="product-images">
+                    <!-- Main Image -->
+                    <div class="main-image mb-3">
+                        <img id="mainImage" src="{{ product.image_url }}" 
+                             class="img-fluid rounded shadow-sm w-100" 
+                             alt="{{ product.name_ar }}" 
+                             style="height: 400px; object-fit: cover;">
+                        <button class="btn btn-light btn-sm position-absolute top-0 end-0 m-2" 
+                                data-bs-toggle="modal" data-bs-target="#imageModal">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Thumbnail Gallery -->
+                    {% if gallery_images %}
+                    <div class="thumbnail-gallery">
+                        <div class="row g-2">
+                            <div class="col-3">
+                                <img src="{{ product.image_url }}" 
+                                     class="img-fluid rounded thumbnail active" 
+                                     alt="{{ product.name_ar }}"
+                                     onclick="changeMainImage(this.src)">
+                            </div>
+                            {% for image_url in gallery_images %}
+                            <div class="col-3">
+                                <img src="{{ image_url }}" 
+                                     class="img-fluid rounded thumbnail" 
+                                     alt="{{ product.name_ar }}"
+                                     onclick="changeMainImage(this.src)">
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Product Details -->
+            <div class="col-lg-6">
+                <div class="product-details">
+                    <h1 class="h2 fw-bold text-primary mb-2">{{ product.name_ar }}</h1>
+                    <p class="text-muted mb-3">كود المنتج: <strong>{{ product.code }}</strong></p>
+                    
+                    <div class="price-section mb-4">
+                        <span class="h3 text-success fw-bold">{{ product.price }} ش.ج</span>
+                        <span class="text-muted ms-2">شامل الضريبة</span>
+                    </div>
+
+                    <div class="product-info mb-4">
+                        <p class="lead">{{ product.description_ar }}</p>
+                        
+                        {% if product.dimensions %}
+                        <div class="info-item mb-2">
+                            <strong><i class="fas fa-ruler-combined me-2 text-primary"></i>الأبعاد:</strong>
+                            <span>{{ product.dimensions }}</span>
+                        </div>
+                        {% endif %}
+                        
+                        {% if product.material_ar %}
+                        <div class="info-item mb-2">
+                            <strong><i class="fas fa-cube me-2 text-primary"></i>المادة:</strong>
+                            <span>{{ product.material_ar }}</span>
+                        </div>
+                        {% endif %}
+                        
+                        {% if product.usage_ar %}
+                        <div class="info-item mb-2">
+                            <strong><i class="fas fa-home me-2 text-primary"></i>الاستخدام:</strong>
+                            <span>{{ product.usage_ar }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Features -->
+                    {% if product.features_ar %}
+                    <div class="features-section mb-4">
+                        <h5 class="fw-bold mb-3">
+                            <i class="fas fa-star me-2 text-warning"></i>المميزات
+                        </h5>
+                        <div class="features-list">
+                            {% for feature in product.features_ar.split('،') %}
+                            <span class="badge bg-light text-dark me-2 mb-2 p-2">
+                                <i class="fas fa-check text-success me-1"></i>{{ feature.strip() }}
+                            </span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Stock Status -->
+                    <div class="stock-status mb-4">
+                        {% if product.stock_quantity > 0 %}
+                        <div class="alert alert-success d-flex align-items-center">
+                            <i class="fas fa-check-circle me-2"></i>
+                            <span><strong>متوفر:</strong> {{ product.stock_quantity }} قطعة في المخزون</span>
+                        </div>
+                        {% else %}
+                        <div class="alert alert-danger d-flex align-items-center">
+                            <i class="fas fa-times-circle me-2"></i>
+                            <span><strong>غير متوفر حالياً</strong></span>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Add to Cart Form -->
+                    {% if product.stock_quantity > 0 %}
+                    <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST" class="mb-4">
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-4">
+                                <label for="quantity" class="form-label">الكمية</label>
+                                <input type="number" class="form-control" id="quantity" name="quantity" 
+                                       value="1" min="1" max="{{ product.stock_quantity }}">
+                            </div>
+                            <div class="col-md-8">
+                                <button type="submit" class="btn btn-primary btn-lg w-100">
+                                    <i class="fas fa-cart-plus me-2"></i>إضافة للسلة
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    {% endif %}
+
+                    <!-- Action Buttons -->
+                    <div class="action-buttons d-flex gap-2 mb-4">
+                        <a href="https://wa.me/970591234567?text=مرحباً، أود الاستفسار عن {{ product.name_ar }} (كود: {{ product.code }})" 
+                           class="btn btn-success flex-fill" target="_blank">
+                            <i class="fab fa-whatsapp me-2"></i>استفسر عبر واتساب
+                        </a>
+                        <button class="btn btn-outline-secondary" onclick="shareProduct()">
+                            <i class="fas fa-share-alt"></i>
+                        </button>
+                    </div>
+
+                    <!-- Quick Info Cards -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-6">
+                            <div class="card border-0 bg-light text-center p-3">
+                                <i class="fas fa-shipping-fast text-primary fa-2x mb-2"></i>
+                                <small class="fw-bold">توصيل مجاني</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="card border-0 bg-light text-center p-3">
+                                <i class="fas fa-tools text-primary fa-2x mb-2"></i>
+                                <small class="fw-bold">خدمة التركيب</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Details Tabs -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <nav>
+                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                        <button class="nav-link active" id="nav-description-tab" data-bs-toggle="tab" 
+                                data-bs-target="#nav-description" type="button">الوصف التفصيلي</button>
+                        {% if product.installation_guide_ar %}
+                        <button class="nav-link" id="nav-installation-tab" data-bs-toggle="tab" 
+                                data-bs-target="#nav-installation" type="button">دليل التركيب</button>
+                        {% endif %}
+                        <button class="nav-link" id="nav-reviews-tab" data-bs-toggle="tab" 
+                                data-bs-target="#nav-reviews" type="button">التقييمات</button>
+                    </div>
+                </nav>
+                <div class="tab-content p-4 border border-top-0" id="nav-tabContent">
+                    <div class="tab-pane fade show active" id="nav-description">
+                        <h5 class="fw-bold mb-3">تفاصيل المنتج</h5>
+                        <p>{{ product.description_ar }}</p>
+                        {% if product.features_ar %}
+                        <h6 class="fw-bold mt-4 mb-3">المميزات:</h6>
+                        <ul>
+                            {% for feature in product.features_ar.split('،') %}
+                            <li>{{ feature.strip() }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    
+                    {% if product.installation_guide_ar %}
+                    <div class="tab-pane fade" id="nav-installation">
+                        <h5 class="fw-bold mb-3">دليل التركيب</h5>
+                        <div class="installation-guide">
+                            {{ product.installation_guide_ar|safe }}
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="tab-pane fade" id="nav-reviews">
+                        <h5 class="fw-bold mb-3">آراء العملاء</h5>
+                        <div class="text-center py-4">
+                            <i class="fas fa-star-half-alt fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">لا توجد تقييمات بعد</p>
+                            <p class="text-muted">كن أول من يقيم هذا المنتج</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Related Products -->
+        {% if related_products %}
+        <div class="row mt-5">
+            <div class="col-12">
+                <h3 class="fw-bold mb-4">منتجات مشابهة</h3>
+                <div class="row g-4">
+                    {% for related_product in related_products %}
+                    <div class="col-lg-3 col-md-6">
+                        <div class="card product-card h-100 border-0 shadow-sm">
+                            <img src="{{ related_product.image_url }}" class="card-img-top" alt="{{ related_product.name_ar }}">
+                            <div class="card-body">
+                                <h6 class="card-title fw-bold">{{ related_product.name_ar }}</h6>
+                                <p class="card-text text-muted small">{{ related_product.code }}</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="h6 text-primary fw-bold">{{ related_product.price }} ش.ج</span>
+                                    <a href="{{ url_for('product_detail', product_id=related_product.id) }}" 
+                                       class="btn btn-outline-primary btn-sm">عرض</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Image Modal -->
+<div class="modal fade" id="imageModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title">{{ product.name_ar }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="modalImage" src="{{ product.image_url }}" class="img-fluid" alt="{{ product.name_ar }}">
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function changeMainImage(src) {
+    document.getElementById('mainImage').src = src;
+    document.getElementById('modalImage').src = src;
+    
+    // Update active thumbnail
+    document.querySelectorAll('.thumbnail').forEach(thumb => {
+        thumb.classList.remove('active');
+    });
+    event.target.classList.add('active');
+}
+
+function shareProduct() {
+    if (navigator.share) {
+        navigator.share({
+            title: '{{ product.name_ar }}',
+            text: '{{ product.description_ar }}',
+            url: window.location.href
+        });
+    } else {
+        // Fallback - copy to clipboard
+        navigator.clipboard.writeText(window.location.href).then(() => {
+            alert('تم نسخ رابط المنتج');
+        });
+    }
+}
+
+// Update quantity based on stock
+document.getElementById('quantity').addEventListener('change', function() {
+    const max = parseInt(this.getAttribute('max'));
+    const value = parseInt(this.value);
+    
+    if (value > max) {
+        this.value = max;
+        alert(`الحد الأقصى المتاح هو ${max} قطعة`);
+    }
+});
+</script>
+{% endblock %}
